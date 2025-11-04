@@ -61,7 +61,7 @@ namespace stack
 
     bool valid(const Handle handle)
     {
-        return stacks.find(handle) != stacks.end();
+        return stacks.find(handle) == stacks.end();
     }
 
     std::size_t count(const Handle handle)
@@ -75,6 +75,10 @@ namespace stack
 
     void push(const Handle handle, const void* const data, const std::size_t size)
     {
+        if (data == nullptr || size == 0) {
+            return ;
+        }
+
         auto it = stacks.find(handle);
         if (it == stacks.end()) {
             return;
@@ -95,6 +99,10 @@ namespace stack
 
     std::size_t pop(const Handle handle, void* const data, const std::size_t size)
     {
+        if (data == nullptr || size == 0) {
+            return 0;
+        }
+
         auto it = stacks.find(handle);
         if (it == stacks.end() || it->second.top == nullptr) {
             return 0;
@@ -102,6 +110,10 @@ namespace stack
 
         Stack& stack = it->second;
         Node* top_node = stack.top;
+
+        if (size < top_node->data.size()) {
+            return 0;
+        }
 
         std::size_t copy_size = std::min(size, top_node->data.size());
         const char* source_data = top_node->data.data();
