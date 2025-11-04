@@ -129,4 +129,4 @@ namespace stack
 
         return copy_size;
     }
-}
+} //namespace stack
