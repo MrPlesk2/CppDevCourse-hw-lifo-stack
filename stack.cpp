@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <vector>
 #include <stdexcept>
+#include <queue>
+#include <limits>
 
 namespace stack
 {
@@ -28,12 +30,37 @@ namespace stack
     };
 
     std::unordered_map<Handle, Stack> stacks;
-    Handle next_handle = 0;
+    std::queue<Handle> available_handles;
+    Handle next_new_handle = 0;
+
+    Handle allocate_handle() {
+        if (!available_handles.empty()) {
+            Handle handle = available_handles.front();
+            available_handles.pop();
+            return handle;
+        }
+        
+        if (next_new_handle < std::numeric_limits<Handle>::max()) {
+            return next_new_handle++;
+        }
+        
+        return -1;
+    }
+    
+    void deallocate_handle(Handle handle) {
+        if (handle != -1) {
+            available_handles.push(handle);
+        }
+    }
 
     Handle create()
     {
         try {
-            Handle handle = next_handle++;
+            Handle handle = allocate_handle();
+            if (handle == -1) {
+                return -1;
+            }
+            
             stacks.emplace(handle, Stack());
             return handle;
         } catch (...) {
@@ -57,6 +84,7 @@ namespace stack
         }
 
         stacks.erase(it);
+        deallocate_handle(handle);
     }
 
     bool valid(const Handle handle)
