@@ -89,7 +89,7 @@ namespace stack
 
     bool valid(const Handle handle)
     {
-        return stacks.find(handle) == stacks.end();
+        return stacks.find(handle) != stacks.end();
     }
 
     std::size_t count(const Handle handle)
