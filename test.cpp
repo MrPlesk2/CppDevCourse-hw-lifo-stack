@@ -8,7 +8,7 @@ using namespace stack;
 TEST(AllAPITest, BadStackHandler)
 {
     destroy(-1);
-    EXPECT_EQ(valid(-1), 1);
+    EXPECT_EQ(valid(-1), false);
     EXPECT_EQ(count(-1), 0u);
     const int data_in = 1;
     push(-1, &data_in, sizeof(data_in));
@@ -20,10 +20,10 @@ TEST(AllAPITest, BadStackHandler)
 TEST(AllocationTests, SingleAllocation)
 {
     const Handle stack = create();
-    EXPECT_EQ(valid(stack), 0);
+    EXPECT_EQ(valid(stack), true);
     EXPECT_EQ(count(stack), 0u);
     destroy(stack);
-    EXPECT_EQ(valid(stack), 1);
+    EXPECT_EQ(valid(stack), false);
 }
 
 TEST(AllocationTests, SeveralAllocations)
@@ -33,13 +33,13 @@ TEST(AllocationTests, SeveralAllocations)
     for (size_t i = 0; i < num; ++i)
     {
         stacks[i] = create();
-        EXPECT_EQ(valid(stacks[i]), 0);
+        EXPECT_EQ(valid(stacks[i]), true);
         EXPECT_EQ(count(stacks[i]), 0u);
     }
     for (size_t i = 0; i < num; ++i)
     {
         destroy(stacks[i]);
-        EXPECT_EQ(valid(stacks[i]), 1);
+        EXPECT_EQ(valid(stacks[i]), false);
     }
 }
 
@@ -48,12 +48,12 @@ struct ModifyTests : ::testing::Test
     void SetUp()
     {
         stack = create();
-        ASSERT_EQ(valid(stack), 0);
+        ASSERT_EQ(valid(stack), true);
     }
     void TearDown()
     {
         destroy(stack);
-        ASSERT_EQ(valid(stack), 1);
+        ASSERT_EQ(valid(stack), false);
     }
     Handle stack = -1;
 };
